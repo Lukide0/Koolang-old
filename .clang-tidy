@@ -1,0 +1,16 @@
+Checks: >
+    -*,
+    performace-*,
+
+    readability-*,
+    -readability-function-cognitive-complexity,
+    -readability-convert-member-functions-to-static,
+    -readability-else-after-return,
+
+    bugprone-*,
+    -bugprone-easily-swappable-parameters,
+
+    modernize-*,
+    -modernize-use-trailing-return-type,
+
+    mics-include-cleaner,
