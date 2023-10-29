@@ -225,6 +225,7 @@ TokenList Tokenizer::Tokenize() {
             case '\n':
                 tag   = TokenTag::INVALID;
                 state = State::STRING_LIT;
+                break;
             default:
                 break;
             }

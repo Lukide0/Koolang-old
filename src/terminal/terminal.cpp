@@ -1,8 +1,6 @@
 #include "terminal.h"
 #include "globals.h"
 
-#include "config.h"
-
 #ifdef _WIN32
 #include <windows.h>
 #endif

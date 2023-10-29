@@ -1,5 +1,5 @@
 #include "SymbolMap.h"
-#include "Module.h"
+#include "air/Module.h"
 #include <memory>
 
 namespace air::symbol {

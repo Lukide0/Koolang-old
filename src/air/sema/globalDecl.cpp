@@ -1,4 +1,4 @@
-#include "Sema.h"
+#include "air/Sema.h"
 #include "kir/Extra.h"
 
 namespace air {

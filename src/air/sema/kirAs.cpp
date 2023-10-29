@@ -1,6 +1,6 @@
-#include "Sema.h"
-#include "type.h"
-#include "value.h"
+#include "air/Sema.h"
+#include "air/type.h"
+#include "air/value.h"
 
 namespace air {
 
