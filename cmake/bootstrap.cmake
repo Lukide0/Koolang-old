@@ -2,10 +2,10 @@ include_guard(GLOBAL)
 
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
     message(
-    FATAL_ERROR
-      "CMake generation for 'koolang' is not allowed within the source directory!\n"
-      "Please create a separate directory (e.g., 'build') and run CMake from there to keep your source directory clean and organized."
-  )
+        FATAL_ERROR
+        "CMake generation for 'koolang' is not allowed within the source directory!\n"
+        "Please create a separate directory (e.g., 'build') and run CMake from there to keep your source directory clean and organized."
+    )
 endif()
 
 # ----------------------------------------------------------------------------
@@ -37,3 +37,23 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     include(${PROJECT_SOURCE_DIR}/cmake/compiler/msvc.cmake)
 endif()
+
+function(target_compiler_settings target)
+
+    target_include_directories(${target} PRIVATE ${PROJECT_SOURCE_DIR}/src)
+    # C++ standard
+    target_compile_features(${target} PRIVATE cxx_std_23)
+    set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
+
+    target_compile_definitions(
+        ${target}
+        PRIVATE $<$<CONFIG:Debug>:KOOLANG_DEBUG_MODE>
+                $<$<CONFIG:RelWithDebugInfo>:KOOLANG_DEBUG_MODE> VERSION="1.0")
+
+    target_compile_options(
+        ${target}
+        PRIVATE $<$<CONFIG:Debug,RelWithDebugInfo>:${compiler_flags_debug}>
+                ${compiler_flags})
+
+endfunction()
+

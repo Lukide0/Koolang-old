@@ -1,3 +1,7 @@
+include(${PROJECT_SOURCE_DIR}/cmake/create_test.cmake)
+
+include(CTest)
+
 include(ExternalProject)
 find_package(Git REQUIRED)
 
@@ -18,4 +22,6 @@ set(DOCTEST_INCLUDE_DIR
     ${source_dir}/doctest
     CACHE INTERNAL "Path to include folder for doctest")
 
-enable_testing()
+
+create_test("tokenizer" FILES "Tokenizer.test.cpp" LIBS ast_lib INCLUDE ${DOCTEST_INCLUDE_DIR})
+create_test("parser" FILES "Parser.test.cpp" LIBS ast_lib INCLUDE ${DOCTEST_INCLUDE_DIR})

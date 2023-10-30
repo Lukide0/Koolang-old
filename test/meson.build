@@ -14,10 +14,6 @@ test_sources = {
         'libs': [ parser_lib, term_lib ],
         'file': 'Parser.test.cpp',
     },
-    'AstGen': {
-        'libs': [ astgen_lib ],
-        'file': 'AstGen.test.cpp',
-    },
     'Pool': {
         'libs': [ air_lib ],
         'file': 'Pool.test.cpp',
