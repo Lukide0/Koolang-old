@@ -119,7 +119,7 @@ void AstGen::CreateSymbol(RefInst identifier, Index decl, Index scope, Index fla
 
 void AstGen::EnterScope(Scope::Type type, Index name, Index meta) {
     if (!isNull(name) && !isNull(m_scopes.at(m_currScope).Contains(name))) {
-        KOOLANG_ERR_MSG("SCOPE ALREADY EXISTS");
+        KOOLANG_ERR_MSG("DUPLICATE SCOPE");
         m_currScope = CreateOrGetScope(type, NULL_INDEX, meta);
     } else {
         m_currScope = CreateOrGetScope(type, name, meta);
@@ -133,7 +133,7 @@ void AstGen::AddLabel(Index str, Index inst) {
     m_labels.push_back(Label { inst, str });
 
     if (!isNull(found)) {
-        KOOLANG_ERR_MSG("DUPLICITE LABEL");
+        KOOLANG_ERR_MSG("DUPLICATE LABEL");
     }
 }
 
@@ -427,9 +427,94 @@ void AstGen::GenEnum(Index node) {
     ExitScope();
 }
 
-void AstGen::GenVariant(Index node) { DISCARD_VALUE(node); }
-void AstGen::GenImpl(Index node) { DISCARD_VALUE(node); }
-void AstGen::GenTrait(Index node) { DISCARD_VALUE(node); }
+void AstGen::GenVariant(Index node) {
+    KOOLANG_TODO();
+    DISCARD_VALUE(node);
+}
+void AstGen::GenImpl(Index node) {
+    const auto& implNode = GetNode(node);
+
+    const Index meta       = implNode.Lhs;
+    const Index itemsCount = implNode.Rhs;
+
+    const Index vis        = GetNodeMeta(meta);
+    const Index metaStruct = GetNodeMeta(meta + 1);
+    const Index metaTrait  = GetNodeMeta(meta + 2);
+    const Index itemsStart = meta + 3;
+
+    //-- IMPL BLOCK START --//
+    EnterScope(Scope::BLOCK);
+    const auto implBlock = EnterBlock();
+
+    const RefInst structPath = GenPath(metaStruct);
+    const RefInst traitPath  = !isNull(metaTrait) ? GenPath(metaTrait) : RefInst::NONE;
+
+    for (Index i = 0; i < itemsCount; i++) {
+        const auto item = GetNodeMeta(itemsStart + i);
+        GenFn(item);
+    }
+
+    CreateBlock(InstType::BLOCK_COMPTIME_INLINE, implBlock, node);
+    ExitScope();
+    //-- IMPL BLOCK END --//
+
+    const auto inst = CreateInst(
+        InstType::DECL_IMPL,
+        InstData::CreateBin(
+            CreateExtraFrom(extra::DeclImpl { extra::Decl { vis, NULL_INDEX, NULL_INDEX }, traitPath, structPath }),
+            implBlock.Inst
+        )
+    );
+
+    DISCARD_VALUE(inst);
+}
+
+/*
+example:
+trait Debug {
+    fn println() : void;
+    fn print(s : str) : void;
+}
+
+z% = trait_block({
+    %x = decl_fn(...)
+    %y = decl_fn(...)
+})
+*/
+void AstGen::GenTrait(Index node) {
+
+    const auto& traitNode  = GetNode(node);
+    const Index meta       = traitNode.Lhs;
+    const Index itemsCount = traitNode.Rhs;
+
+    const Index vis      = GetNodeMeta(meta);
+    const RefInst docTok = GetOrCreateStr(GetNodeMeta(meta + 1));
+
+    const RefInst traitID  = GetOrCreateStr(GetNodeToken(node) + 1);
+    const Index itemsStart = meta + 2;
+
+    //-- TRAIT BLOCK START --//
+    EnterScope(Scope::BLOCK);
+    const auto traitBlock = EnterBlock();
+
+    for (Index i = 0; i < itemsCount; i++) {
+        const auto item = GetNodeMeta(itemsStart + i);
+        GenFn(item);
+    }
+
+    CreateBlock(InstType::BLOCK_COMPTIME_INLINE, traitBlock, node);
+    ExitScope();
+    //-- TRAIT BLOCK END --//
+
+    const auto inst = CreateInst(
+        InstType::DECL_TRAIT,
+        InstData::CreateBin(
+            CreateExtraFrom(extra::DeclTrait { extra::Decl { vis, docTok.Offset, traitID.Offset } }), traitBlock.Inst
+        )
+    );
+
+    CreateSymbol(traitID, inst, m_currScope, SymbolMeta::CONST_FLAG);
+}
 
 void AstGen::GenStruct(Index node) {
     const auto& structNode  = GetNode(node);

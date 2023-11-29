@@ -185,6 +185,7 @@ void Printer::WriteInst(Index ref) {
     case InstType::BLOCK:
     case InstType::LOOP:
         WriteBlock(ref);
+        WriteNewLine();
         break;
     case InstType::DECL:
         WriteDecl(ref);
@@ -194,6 +195,12 @@ void Printer::WriteInst(Index ref) {
         break;
     case InstType::DECL_ITEM:
         WriteDeclItem(ref);
+        break;
+    case InstType::DECL_TRAIT:
+        WriteDeclTrait(ref);
+        break;
+    case InstType::DECL_IMPL:
+        WriteDeclImpl(ref);
         break;
     case InstType::NAMESPACE:
         WriteNamespace(ref);
@@ -644,23 +651,20 @@ void Printer::WriteBlockRaw(Index block) {
     }
 
     m_offset -= 1;
-
     Write(std::string(m_offset * 2, ' '));
 }
 
 void Printer::WriteBlock(Index block) {
     if (isNull(block)) {
-        Write("block({})");
-        WriteNewLine();
+        Write("block{}");
         return;
     } else if (m_kir.Type.at(block) == InstType::LOOP) {
-        Write("loop({\n");
+        Write("loop{\n");
     } else {
-        Write("block({\n");
+        Write("block{\n");
     }
     WriteBlockRaw(block);
-    Write("})");
-    WriteNewLine();
+    Write('}');
 }
 
 void Printer::WriteBlockInline(Index block) {
@@ -727,6 +731,35 @@ void Printer::WriteDeclFn(Index ref) {
     }
 
     WriteBlock(instData.Rhs.Offset);
+    Write(')');
+    WriteNewLine();
+}
+
+void Printer::WriteDeclTrait(Index ref) {
+    const auto& instData = m_kir.Inst.at(ref).Bin;
+    const auto& trait    = deserializeFromVec<extra::DeclTrait>(m_kir.Extra, instData.Lhs.Offset);
+
+    Write("decl_trait(\"");
+    WriteCond("pub ", trait.DeclInfo.Vis);
+    WriteStr(trait.DeclInfo.Name);
+    Write("\", ");
+    WriteBlockInline(instData.Rhs.Offset);
+    Write(')');
+    WriteNewLine();
+}
+
+void Printer::WriteDeclImpl(Index ref) {
+    const auto& instData = m_kir.Inst.at(ref).Bin;
+    const auto& impl     = deserializeFromVec<extra::DeclImpl>(m_kir.Extra, instData.Lhs.Offset);
+
+    Write("decl_impl(\"");
+    WriteCond("pub", impl.DeclInfo.Vis);
+    Write("\", ");
+    WriteInstRef(impl.StructPath);
+    Write(", ");
+    WriteInstRef(impl.TraitPath);
+    Write(", ");
+    WriteBlockInline(instData.Rhs.Offset);
     Write(')');
     WriteNewLine();
 }

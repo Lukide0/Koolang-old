@@ -46,6 +46,19 @@ enum class InstType : std::uint8_t {
     DECL_VARIANT,
 
     /*
+     * Defines trait
+     * Uses field 'Bin'. Lhs is 'DeclTrait'. Rhs is 'BLOCK_COMPTIME_INLINE' instruction.
+     */
+    DECL_TRAIT,
+
+    /*
+     * Defines implementation
+     *
+     *
+     */
+    DECL_IMPL,
+
+    /*
      * Defines struct field
      *
      */

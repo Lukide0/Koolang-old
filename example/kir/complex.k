@@ -1,18 +1,18 @@
 // complex.k
 
-const A : u8 = 1;
-
-pub struct ABC {
-    pub a : i32;
-    pub b : i64 = a;
-    pub const A : i8 = a + b;
-
+trait Something
+{
+    fn add(a : i32, b : i32);
 }
 
-pub fn function_add(a : i32, b : i32) : i32 {
-    while(true) {
+pub impl Something
+{
+    pub fn add(a : i32, b : i32)
+    {
+        return a;
     }
 }
+
 
 /* const B : u8 = 2; */
 /* const A_COPY : i8 = 1 << 6; */

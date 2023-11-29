@@ -150,6 +150,11 @@ void Sema::AnalyzeBody() {
         break;
     case KirType::DECL_STRUCT:
         break;
+    case KirType::DECL_TRAIT:
+        break;
+    case KirType::DECL_IMPL:
+        break;
+
     case KirType::DECL_VARIANT:
         break;
     default:
@@ -346,6 +351,8 @@ void Sema::AnalyzeInst(Index inst) {
     case KirType::DECL_ENUM:
     case KirType::DECL_STRUCT:
     case KirType::DECL_VARIANT:
+    case KirType::DECL_TRAIT:
+    case KirType::DECL_IMPL:
     case KirType::STRUCT_FIELD:
     case KirType::ENUM_FIELD:
     case KirType::PARAM:

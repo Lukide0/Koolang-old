@@ -23,5 +23,3 @@ set(compiler_flags
     -Wpessimizing-move
     -Wredundant-move
     -Wself-move)
-
-set(compiler_flags_debug -fsanitize=address,undefined)

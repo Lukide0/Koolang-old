@@ -111,16 +111,10 @@ enum class Tag : unsigned char {
 
     /*
     Lhs: Meta
-    Rhs: IMPL_BODY
-    Meta: PATH (struct), PATH (trait)
+    Rhs: Size
+    Meta: vis, PATH (struct), PATH (trait), trailing nodes
     */
     IMPL,
-
-    /*
-    Lhs: Size
-    Rhs: End node
-    */
-    IMPL_BODY,
 
     /*
     Lhs: Meta
@@ -179,8 +173,8 @@ enum class Tag : unsigned char {
 
     /*
     Lhs: Meta
-    Rhs: End node
-    Meta: vis, doc tok
+    Rhs: Size
+    Meta: vis, doc tok, trailing nodes
     */
     TRAIT,
 

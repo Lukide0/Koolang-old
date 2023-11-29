@@ -33,8 +33,6 @@ std::string_view tagToStr(Tag tag) {
         return "VARIANT"sv;
     case Tag::IMPL:
         return "IMPL"sv;
-    case Tag::IMPL_BODY:
-        return "IMPL_BODY"sv;
     case Tag::STRUCT:
         return "STRUCT"sv;
     case Tag::STRUCT_FIELD:

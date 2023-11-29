@@ -28,6 +28,8 @@ private:
 
     void WriteDecl(Index ref);
     void WriteDeclFn(Index ref);
+    void WriteDeclTrait(Index ref);
+    void WriteDeclImpl(Index ref);
     void WriteBinInst(std::string_view name, Index nodepl);
     void WriteDeclRef(Index ref);
     void WriteDeclItem(Index ref);

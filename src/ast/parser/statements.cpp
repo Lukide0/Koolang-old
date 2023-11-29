@@ -641,16 +641,26 @@ Index Parser::TraitStmt() {
         return NULL_INDEX;
     }
 
+    const Index cacheIndex = GetCacheLen();
+    Index itemsCount       = 0;
+    AddToCache(m_vis);
+    AddToCache(m_docTok);
+
     // fnDef+ }
     do {
+        m_vis   = Vis();
         endNode = FnDef();
         RETURN_IF_NULL(endNode);
         ExpectSemicolon();
 
+        AddToCache(endNode);
+        itemsCount += 1;
+
     } while (!m_ast.Tokens.Expect(TokenTag::CURLY_R));
 
-    InsertData(node, endNode);
-    InsertMeta(node, { m_vis, m_docTok });
+    const Index meta = CreateMetaFromCache(cacheIndex);
+
+    SetNodeValues(node, meta, itemsCount);
     return node;
 }
 
@@ -659,6 +669,9 @@ Syntax:
     impl pathExpr (: pathExpr)? { fnStmt+ }
 */
 Index Parser::ImplStmt() {
+
+    const Index vis = m_vis;
+
     // impl
     const Index node = ReserveNode(Tag::IMPL, m_ast.Tokens.EatTok());
 
@@ -679,27 +692,28 @@ Index Parser::ImplStmt() {
         return NULL_INDEX;
     }
 
-    InsertMeta(node, { path, trait });
+    const Index cacheIndex = GetCacheLen();
+    AddToCache(vis);
+    AddToCache(path);
+    AddToCache(trait);
 
-    const Index body = ReserveNode(Tag::IMPL_BODY);
-    Index size       = 0;
-    Index endNode;
+    Index size = 0;
 
     m_vis = static_cast<Index>(Vis::LOCAL);
     // fnStmt+ }
     do {
-
         m_docTok = m_ast.Tokens.EatDocComments();
+        m_vis    = Vis();
 
-        endNode = FnStmt();
-        RETURN_IF_NULL(endNode);
+        const auto fn = FnStmt();
+        RETURN_IF_NULL(fn);
         size += 1;
+        AddToCache(fn);
 
     } while (!m_ast.Tokens.Expect(TokenTag::CURLY_R));
 
-    SetNodeValues(body, size, endNode);
+    SetNodeValues(node, CreateMetaFromCache(cacheIndex), size);
 
-    InsertData(node, body);
     return node;
 }
 

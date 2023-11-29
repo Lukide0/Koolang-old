@@ -47,6 +47,16 @@ struct DeclEnumField {
     Index Name;
 };
 
+struct DeclTrait {
+    Decl DeclInfo;
+};
+
+struct DeclImpl {
+    Decl DeclInfo;
+    RefInst TraitPath;
+    RefInst StructPath;
+};
+
 struct Bin {
     Index Lhs;
     Index Rhs;
