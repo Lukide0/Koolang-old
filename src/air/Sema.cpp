@@ -73,10 +73,6 @@ template <> void Sema::CreateConstant<KirType::FLOAT>(const Index inst) {
     ));
 
     CreateConstantFrom(inst, poolIndex);
-
-    // Floats are not implemented yet
-    KOOLANG_TODO();
-    KOOLANG_UNREACHABLE();
 }
 
 void Sema::AnalyzeGlobDecl() {
@@ -258,8 +254,8 @@ void Sema::AnalyzeInst(Index inst) {
         CreateConstant<KirType::INT>(inst);
         break;
     case KirType::FLOAT:
-        // CreateConstant<KirType::FLOAT>(inst);
-        // break;
+        CreateConstant<KirType::FLOAT>(inst);
+        break;
     case KirType::STR:
         // CreateConstant<KirType::STR>(inst);
         // break;
@@ -507,10 +503,11 @@ template <type::Operation Op> void Sema::KirArithmetic(Index inst) {
         }
     }
 
-    if (AreConstants(lhs.Inst, rhs.Inst)) {
-        EvalOp<Op>(inst, lhs, rhs);
-        return;
-    }
+    // TODO: Eval
+    // if (AreConstants(lhs.Inst, rhs.Inst)) {
+    //     EvalOp<Op>(inst, lhs, rhs);
+    //     return;
+    // }
 
     InstType type;
 
